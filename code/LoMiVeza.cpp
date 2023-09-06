@@ -72,26 +72,67 @@ const tTokenValue::tPairSignTable tTokenValue::vPairSignTable = {
 	{"[", "]"},
 	{"(", ")"},
 };//vPairSignTable
+//testing
+#if defined(dLoMiVeza_MakeTest)
+//-//typedef
+using tTestKey		= std::string_view;
+using tTestOut		= int;
+using tTestFun		= std::function<tTestOut(void)>;
+using tTestTab		= std::unordered_map<tTestKey, tTestFun>;
+using tTestRef		= tTestTab::iterator;
+//-//consdef
+static const tTestTab vTestTab = {
+	{"Hello",
+	 []()
+	 {
+		 fmt::println(stdout, "HelloWorld");
+		 return EXIT_SUCCESS;
+	 }},
+	{"FileSystem",
+	 []()
+	 {
+		 auto vAbsolutePath = nFileSystem::current_path();
+		 auto vRelativePath = nFileSystem::relative(vAbsolutePath);
+		 fmt::println(stdout, "RelativePath={:s}", vRelativePath.c_str());
+		 fmt::println(
+			 stdout, "ProjPathFound={:d}", std::filesystem::exists(dLoMiVeza_ProjPath)
+		 );
+		 fmt::println(
+			 stdout, "DataPathFound={:d}", std::filesystem::exists(dLoMiVeza_ProjPath)
+		 );
+		 return EXIT_SUCCESS;
+	 }},
+	{"Token_Kind",
+	 []()
+	 {
+		 auto vList = std::initializer_list<std::string_view>{
+			 "MetaWord", "constant", "variable", "statical", "NameSign", "@",
+			 "#",				 "$",				 "Operator", "+",				 "-",				 "*",
+			 "/",				 "%",				 "StartKey", "?",				 "{",				 "[",
+			 "(",				 "FinalKey", "!",				 "}",				 "]",				 ")",
+		 };
+		 for(auto vData: vList)
+		 {
+			 nLoMiVeza::tTokenValue vTokenObject(vData);
+			 fmt::println(stdout, "{} -> {}", vData, vTokenObject.fGetKindInfo());
+		 }
+		 return EXIT_SUCCESS;
+	 }},
+};
+#endif//ifd(dLoMiVeza_MakeTest)
 }//namespace nLoMiVeza
 #if defined(dLoMiVeza_MakeTexe)
 //typedef
-#if defined(dLoMiVeza_MakeTest)
-using tTestKey = std::string_view;
-using tTestOut = int;
-using tTestFun = std::function<tTestOut(void)>;
-using tTestTab = std::unordered_map<tTestKey, tTestFun>;
-using tTestRef = tTestTab::iterator;
-#endif//ifd(dLoMiVeza_MakeTest)
 //actions
 int main(int vArgC, char **vArgV, char **vEnvi)
 {
+  nLoMiVeza::nFileSystem::current_path(dLoMiVeza_ProjPath);
 #if defined(dLoMiVeza_MakeTest)
-	extern tTestTab vTestTab;
 	if(vArgC == 3 && std::string_view(vArgV[1]) == "test")
 	{
-		tTestKey vTestKey = std::string_view(vArgV[2]);
-		tTestRef vTestRef = vTestTab.find(vTestKey);
-		if(vTestRef == vTestTab.end())
+		auto vTestKey = std::string_view(vArgV[2]);
+		auto vTestRef = nLoMiVeza::vTestTab.find(vTestKey);
+		if(vTestRef == nLoMiVeza::vTestTab.end())
 		{
 			fmt::println(stderr, "invalid test key: {}", vTestKey);
 			return EXIT_FAILURE;
@@ -99,7 +140,7 @@ int main(int vArgC, char **vArgV, char **vEnvi)
 		else
 		{
 			fmt::println(stdout, "{}?", vTestKey);
-			tTestOut vTestOut = vTestRef->second();
+			auto vTestOut = vTestRef->second();
 			fmt::println(stdout, "{}!", vTestKey);
 			return vTestOut;
 		}
@@ -112,51 +153,5 @@ int main(int vArgC, char **vArgV, char **vEnvi)
 	}
 	return EXIT_SUCCESS;
 }
-#if defined(dLoMiVeza_MakeTest)
-tTestTab vTestTab = {
-	{"Hello",
-	 []()
-	 {
-		 fmt::println(stdout, "HelloWorld");
-		 return EXIT_SUCCESS;
-	 }},
-	{"Token_Kind",
-	 []()
-	 {
-		 auto vList = std::initializer_list<std::string_view>{
-			 "MetaWord",
-			 "constant",
-			 "variable",
-			 "statical",
-			 "NameSign",
-			 "@",
-			 "#",
-			 "$",
-			 "Operator",
-			 "+",
-			 "-",
-			 "*",
-			 "/",
-			 "%",
-			 "StartKey",
-			 "?",
-       "{",
-       "[",
-       "(",
-			 "FinalKey",
-			 "!",
-       "}",
-       "]",
-       ")",
-		 };
-		 for(auto vData: vList)
-		 {
-			 nLoMiVeza::tTokenValue vTokenObject(vData);
-			 fmt::println(stdout, "{} -> {}", vData, vTokenObject.fGetKindInfo());
-		 }
-		 return EXIT_SUCCESS;
-	 }},
-};
-#endif//ifd(dLoMiVeza_MakeTest)
 #endif//ifd(dLoMiVeza_MakeTexe)
 #endif//dLoMiVeza_Cpp

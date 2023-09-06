@@ -3,6 +3,8 @@
 //headers
 #include <cstdlib>
 #include <functional>
+//-//memory
+#include <memory>
 //-//strings
 #include <string_view>
 #include "fmt/format.h"
@@ -17,6 +19,8 @@
 //content
 namespace nLoMiVeza
 {
+namespace nFileSystem = std::filesystem;
+using tSourceUnit = std::shared_ptr<std::string>;
 /* type of token
  * meaning of every separate word or a special symbol in the text
  */
@@ -90,42 +94,14 @@ public://consdef
 	static const tDataKindTable vDataKindTable;
 	static const tPairSignTable vPairSignTable;
 };
-using tTokenTable = std::unordered_map<std::string, tTokenValue>;
 using tTokenArray = std::vector<tTokenValue>;
 /* type of tokenizer
  */
 class tTokenMaker
 {
-public://typedef
-
 public://codetor
 
-	tTokenMaker();
-
-public://getters
-
-public://setters
-
-public://actions
-
-private://datadef
-
-	tTokenTable vTokenTable;
-	tTokenArray vTokenArray;
-
-};//tTokenMaker
-/* type of source code unit
- */
-class tSourceObject
-{
-public://typedef
-
-	using tInfo = std::string_view;
-	using tData = std::string;
-
-public://codetor
-
-	tSourceObject(tInfo vInfo): vData{vInfo}
+	tTokenMaker(tSourceUnit vSourceUnit): vSourceUnit{vSourceUnit}
 	{
 	}
 
@@ -137,9 +113,10 @@ public://actions
 
 private://datadef
 
-	tData vData;
+	tSourceUnit vSourceUnit;
+	tTokenArray vTokenArray;
 
-};//tSourceObject
+};//tTokenMaker
 /* type of Instance
  * the holder of scripting environment
  * all variables and operations are stored here

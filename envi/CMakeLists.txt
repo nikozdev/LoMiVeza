@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.24)
 include(CMakeDependentOption)
 include(FetchContent)
 
+# proj
+
 set(vProjName "LoMiVeza")
 set(vProjVnum "0.0")
 set(vProjDesc "Language Of My Vesania")
@@ -26,6 +28,10 @@ set(vCodeFile "${vCodePath}/${vProjName}.cpp")
 set(vHeadPath "${vProjPath}/code")
 set(vHeadFile "${vHeadPath}/${vProjName}.hpp")
 
+# data
+
+set(vDataPath "${vProjPath}/data")
+
 # defs
 
 set(vDefsName "d${vProjName}_")
@@ -48,7 +54,13 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${vMakePath}")
 set(vTlibName "t${vProjName}Lib")
 
 add_library(${vTlibName} INTERFACE)
-target_compile_definitions(${vTlibName} INTERFACE ${vDefsName}MakeTlib)
+target_compile_definitions(${vTlibName} INTERFACE ${vDefsName}MakeTlib
+  ${vDefsName}ProjName="${vProjName}"
+  ${vDefsName}ProjVnum="${vProjVnum}"
+  ${vDefsName}ProjDesc="${vProjDesc}"
+  ${vDefsName}ProjPath="${vProjPath}"
+  ${vDefsName}DataPath="${vDataPath}"
+  ) # target_compile_definitions
 
 target_precompile_headers(${vTlibName} INTERFACE ${vHeadFile})
 
@@ -96,6 +108,11 @@ if(oMakeTest)
   list(APPEND vTestText "HelloWorld")
   fTest("Hello" ${vTestText})
   set(vTestText "")
+  list(APPEND vTestText "RelativePath=.")
+  list(APPEND vTestText "ProjPathFound=1")
+  list(APPEND vTestText "DataPathFound=1")
+  fTest("FileSystem" ${vTestText})
+  set(vTestText "")
   list(APPEND vTestText "MetaWord -> NameWord\n")
   list(APPEND vTestText "constant -> MetaWord\n")
   list(APPEND vTestText "variable -> MetaWord\n")
@@ -112,14 +129,14 @@ if(oMakeTest)
   list(APPEND vTestText "\\% -> Operator\n")
   list(APPEND vTestText "StartKey -> NameWord\n")
   list(APPEND vTestText "\\? -> StartKey\n")
-	list(APPEND vTestText "\\{ -> StartKey\n")
-	list(APPEND vTestText "\\[ -> StartKey\n")
-	list(APPEND vTestText "\\( -> StartKey\n")
+  list(APPEND vTestText "\\{ -> StartKey\n")
+  list(APPEND vTestText "\\[ -> StartKey\n")
+  list(APPEND vTestText "\\( -> StartKey\n")
   list(APPEND vTestText "FinalKey -> NameWord\n")
-	list(APPEND vTestText "\\! -> FinalKey\n")
-	list(APPEND vTestText "\\} -> FinalKey\n")
-	list(APPEND vTestText "\\] -> FinalKey\n")
-	list(APPEND vTestText "\\) -> FinalKey\n")
+  list(APPEND vTestText "\\! -> FinalKey\n")
+  list(APPEND vTestText "\\} -> FinalKey\n")
+  list(APPEND vTestText "\\] -> FinalKey\n")
+  list(APPEND vTestText "\\) -> FinalKey\n")
   fTest("Token_Kind" ${vTestText})
 
 endif(oMakeTest)
