@@ -5,7 +5,74 @@
 //content
 namespace nLoMiVeza
 {
-}
+//typedef
+//-//tTokenValue
+//-//-//getters
+auto tTokenValue::fGetKind(tInfo vInfo) -> eKind
+{
+	if(vInfo.size() < 1)
+	{
+		return eKindNone;
+	}
+	auto vDataKindFound = vDataKindTable.find(vInfo);
+	if(vDataKindFound != vDataKindTable.end())
+	{
+		return vDataKindFound->second;
+	}
+	return eKindNameWord;
+}//fGetKind
+auto tTokenValue::fGetKindInfo(eKind vKind) -> tInfo
+{
+	return vKindInfoArray[vKind];
+}//fGetKindInfo
+//-//-//consdef
+const tTokenValue::tKindInfoArray tTokenValue::vKindInfoArray = {
+	[eKindNone]			= "None",
+	[eKindMetaWord] = "MetaWord",
+	[eKindNameSign] = "NameSign",
+	[eKindNameWord] = "NameWord",
+	[eKindOperator] = "Operator",
+	[eKindStartKey] = "StartKey",
+	[eKindFinalKey] = "FinalKey",
+};//vKindInfoArray
+const tTokenValue::tDataKindTable tTokenValue::vDataKindTable = {
+	//MetaWord
+	{"variable", eKindMetaWord},
+	{"constant", eKindMetaWord},
+	{"statical", eKindMetaWord},
+ //NameSign
+	{"@",				eKindNameSign},
+	{"#",				eKindNameSign},
+	{"$",				eKindNameSign},
+ //Operator
+	{"+",				eKindOperator},
+	{"-",				eKindOperator},
+	{"*",				eKindOperator},
+	{"/",				eKindOperator},
+	{"%",				eKindOperator},
+	{"|",				eKindOperator},
+	{"&",				eKindOperator},
+	{"^",				eKindOperator},
+	{".",				eKindOperator},
+	{",",				eKindOperator},
+ //StartKey
+	{"?",				eKindStartKey},
+	{"{",				eKindStartKey},
+	{"[",				eKindStartKey},
+	{"(",				eKindStartKey},
+ //FinalKey
+	{"!",				eKindFinalKey},
+	{"}",				eKindFinalKey},
+	{"]",				eKindFinalKey},
+	{")",				eKindFinalKey},
+};//vDataKindTable
+const tTokenValue::tPairSignTable tTokenValue::vPairSignTable = {
+	{"?", "!"},
+	{"{", "}"},
+	{"[", "]"},
+	{"(", ")"},
+};//vPairSignTable
+}//namespace nLoMiVeza
 #if defined(dLoMiVeza_MakeTexe)
 //typedef
 #if defined(dLoMiVeza_MakeTest)
@@ -26,14 +93,14 @@ int main(int vArgC, char **vArgV, char **vEnvi)
 		tTestRef vTestRef = vTestTab.find(vTestKey);
 		if(vTestRef == vTestTab.end())
 		{
-			std::cerr << "invalid test key: " << vTestKey << std::endl;
+			fmt::println(stderr, "invalid test key: {}", vTestKey);
 			return EXIT_FAILURE;
 		}
 		else
 		{
-			std::cout << vTestKey << "=" << std::endl;
+			fmt::println(stdout, "{}?", vTestKey);
 			tTestOut vTestOut = vTestRef->second();
-			std::cout << "=" << vTestKey << std::endl;
+			fmt::println(stdout, "{}!", vTestKey);
 			return vTestOut;
 		}
 	}
@@ -50,7 +117,43 @@ tTestTab vTestTab = {
 	{"Hello",
 	 []()
 	 {
-     std::cout << "HelloWorld";
+		 fmt::println(stdout, "HelloWorld");
+		 return EXIT_SUCCESS;
+	 }},
+	{"Token_Kind",
+	 []()
+	 {
+		 auto vList = std::initializer_list<std::string_view>{
+			 "MetaWord",
+			 "constant",
+			 "variable",
+			 "statical",
+			 "NameSign",
+			 "@",
+			 "#",
+			 "$",
+			 "Operator",
+			 "+",
+			 "-",
+			 "*",
+			 "/",
+			 "%",
+			 "StartKey",
+			 "?",
+       "{",
+       "[",
+       "(",
+			 "FinalKey",
+			 "!",
+       "}",
+       "]",
+       ")",
+		 };
+		 for(auto vData: vList)
+		 {
+			 nLoMiVeza::tTokenValue vTokenObject(vData);
+			 fmt::println(stdout, "{} -> {}", vData, vTokenObject.fGetKindInfo());
+		 }
 		 return EXIT_SUCCESS;
 	 }},
 };

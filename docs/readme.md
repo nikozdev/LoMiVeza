@@ -17,6 +17,7 @@ statical@Number#Number{1} == statical @Number #Number { 1 }
 - Names can repeat, only keywords are unique
 > but keywords are not reserving variable or function or type names
 > > because they are written without any special signs
+- A variable or a type can have multiple names in one declaration
 ## example
 ```
 [[

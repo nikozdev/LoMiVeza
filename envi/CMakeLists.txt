@@ -52,6 +52,14 @@ target_compile_definitions(${vTlibName} INTERFACE ${vDefsName}MakeTlib)
 
 target_precompile_headers(${vTlibName} INTERFACE ${vHeadFile})
 
+FetchContent_Declare(fmt
+  GIT_REPOSITORY "https://github.com/fmtlib/fmt.git"
+  GIT_TAG "10.0.0"
+  OVERRIDE_FIND_PACKAGE)
+FetchContent_MakeAvailable(fmt)
+find_package(fmt 10.0.0 REQUIRED)
+target_link_libraries(${vTlibName} INTERFACE fmt::fmt)
+
 ##exe
 
 set(vTexeName "t${vProjName}Exe")
@@ -84,6 +92,34 @@ if(oMakeTest)
     set_tests_properties(${vName} PROPERTIES PASS_REGULAR_EXPRESSION ${vText})
   endfunction(fTest)
 
-  fTest("Hello" "HelloWorld")
+  set(vTestText "")
+  list(APPEND vTestText "HelloWorld")
+  fTest("Hello" ${vTestText})
+  set(vTestText "")
+  list(APPEND vTestText "MetaWord -> NameWord\n")
+  list(APPEND vTestText "constant -> MetaWord\n")
+  list(APPEND vTestText "variable -> MetaWord\n")
+  list(APPEND vTestText "statical -> MetaWord\n")
+  list(APPEND vTestText "NameSign -> NameWord\n")
+  list(APPEND vTestText "\\@ -> NameSign\n")
+  list(APPEND vTestText "\\# -> NameSign\n")
+  list(APPEND vTestText "\\$ -> NameSign\n")
+  list(APPEND vTestText "Operator -> NameWord\n")
+  list(APPEND vTestText "\\+ -> Operator\n")
+  list(APPEND vTestText "\\- -> Operator\n")
+  list(APPEND vTestText "\\* -> Operator\n")
+  list(APPEND vTestText "\\/ -> Operator\n")
+  list(APPEND vTestText "\\% -> Operator\n")
+  list(APPEND vTestText "StartKey -> NameWord\n")
+  list(APPEND vTestText "\\? -> StartKey\n")
+	list(APPEND vTestText "\\{ -> StartKey\n")
+	list(APPEND vTestText "\\[ -> StartKey\n")
+	list(APPEND vTestText "\\( -> StartKey\n")
+  list(APPEND vTestText "FinalKey -> NameWord\n")
+	list(APPEND vTestText "\\! -> FinalKey\n")
+	list(APPEND vTestText "\\} -> FinalKey\n")
+	list(APPEND vTestText "\\] -> FinalKey\n")
+	list(APPEND vTestText "\\) -> FinalKey\n")
+  fTest("Token_Kind" ${vTestText})
 
 endif(oMakeTest)
